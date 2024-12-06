@@ -6,10 +6,7 @@ import br.com.prontorecife.auth.Service.AuthenticationService;
 import br.com.prontorecife.auth.Service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +19,14 @@ public class AuthenticationController {
     public SessionDTO login(@RequestBody AuthenticationRequestDTO request){
         String token = authenticationService.authenticate(request);
         return new SessionDTO(token);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token){
+        String processedToken = token.startsWith("token: ") ? token.substring(7) : token;
+
+        tokenService.invalidateToken(processedToken);
+
+        return ResponseEntity.ok("Logout realizado com sucesso!");
     }
     @PostMapping("/session")
     public ResponseEntity<Void> verifySession(@RequestBody SessionDTO request){

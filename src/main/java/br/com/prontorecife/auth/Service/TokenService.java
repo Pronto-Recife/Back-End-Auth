@@ -17,11 +17,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class TokenService {
     @Value("${jjwt.secret}")
     private String jjwtSecret;
+    private final ConcurrentHashMap<String, Boolean> invalidatedTokens = new ConcurrentHashMap<>();
 
     public String generateToken(String id){
         return Jwts.builder()
@@ -44,6 +46,12 @@ public class TokenService {
         }catch (Exception e){
             throw new CustomException("Sessão invalida!", HttpStatus.FORBIDDEN, Map.of("error", e.getMessage()));
         }
+    }
+    public void invalidateToken(String token){
+        invalidatedTokens.put(token, true);
+    }
+    public boolean isTokenInvalid(String token) {
+        return invalidatedTokens.containsKey(token);
     }
     public Algorithm encryptor(String jjwtSecret){
         return Algorithm.HMAC256(jjwtSecret);
