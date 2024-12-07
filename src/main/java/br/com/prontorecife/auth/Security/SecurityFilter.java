@@ -29,7 +29,8 @@ public class SecurityFilter extends OncePerRequestFilter {
                 || request.getRequestURI().startsWith("/v3/api-docs")
                 || request.getRequestURI().startsWith("/auth/register")
                 || request.getRequestURI().startsWith("/auth/login")
-                || request.getRequestURI().startsWith("/auth/session")) {
+                || request.getRequestURI().startsWith("/auth/session")
+                || request.getRequestURI().startsWith("/test-redis")) {
             filterChain.doFilter(request, response);
             return;
         }
