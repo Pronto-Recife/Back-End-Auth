@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
@@ -29,31 +31,21 @@ public class SecurityFilter extends OncePerRequestFilter {
                 || request.getRequestURI().startsWith("/v3/api-docs")
                 || request.getRequestURI().startsWith("/auth/register")
                 || request.getRequestURI().startsWith("/auth/login")
-                || request.getRequestURI().startsWith("/auth/session")
-                || request.getRequestURI().startsWith("/test-redis")) {
+                || request.getRequestURI().startsWith("/auth/logout")){
             filterChain.doFilter(request, response);
             return;
         }
         String token = this.recoverToken(request);
-        String validatedToken = tokenService.validateToken(token);
-        //String email = tokenService.getEmailFromToken(validatedToken);
-        if (token != null && token.startsWith("Bearer ")) {
-            String processedToken = token.substring(7);
-            if (tokenService.isTokenInvalid(processedToken)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Token invalido ou expirado!");
-                return;
-            }
+        log.info(token);
+        if (tokenService.isTokenInvalid(token)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token invalido ou expirado!");
+            return;
         }
-        /*if (validatedToken.isEmpty()) {
-            throw new CustomException("Não foi possivel receber o email de autenticação do usuário ou o token!", HttpStatus.UNAUTHORIZED, null);
-        }
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, null);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);*/
         filterChain.doFilter(request, response);
     }
-    private String recoverToken (@NonNull HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
+    private String recoverToken (HttpServletRequest request){
+        String authHeader = String.valueOf(request.getHeader("x-auth"));
         if (authHeader == null || authHeader.isEmpty()) {
             throw new AuthorizationHeaderException();
         }
