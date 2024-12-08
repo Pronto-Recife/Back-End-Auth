@@ -58,7 +58,7 @@ public class TokenService {
         redisService.addTokenToBlacklist(token, expirationTime);
     }
     public boolean isTokenInvalid(String token) {
-        return redisService.isTokenBlacklisted(token);
+        return !redisService.isTokenBlacklisted(token);
     }
     public Algorithm encryptor(String jjwtSecret){
         return Algorithm.HMAC256(jjwtSecret);

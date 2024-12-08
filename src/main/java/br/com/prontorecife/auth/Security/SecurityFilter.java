@@ -29,7 +29,6 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException, AuthenticationException {
         if (request.getRequestURI().startsWith("/swagger")
                 || request.getRequestURI().startsWith("/v3/api-docs")
-                || request.getRequestURI().startsWith("/auth/register")
                 || request.getRequestURI().startsWith("/auth/login")
                 || request.getRequestURI().startsWith("/auth/logout")){
             filterChain.doFilter(request, response);
@@ -49,6 +48,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (authHeader == null || authHeader.isEmpty()) {
             throw new AuthorizationHeaderException();
         }
-        return authHeader.substring(7);
+        return authHeader;
     }
 }
