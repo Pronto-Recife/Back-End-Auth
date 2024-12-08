@@ -3,6 +3,7 @@ package br.com.prontorecife.auth.Service;
 import br.com.prontorecife.auth.Exceptions.CustomException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.mysql.cj.util.StringUtils;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,13 +40,16 @@ public class TokenService {
     private SecretKey getSecretKey() {
         return new SecretKeySpec(jjwtSecret.getBytes(), "HmacSHA256");
     }
-    public String validateToken(String token){
+    public boolean validateToken(String token){
         Algorithm algorithm = encryptor(jjwtSecret);
         try {
-            return JWT.require(algorithm)
+            JWT.require(algorithm)
                     .build()
                     .verify(token)
                     .getToken();
+
+            return !redisService.isTokenBlacklisted(token);
+
         }catch (Exception e){
             throw new CustomException("Sessão invalida!", HttpStatus.FORBIDDEN, Map.of("error", e.getMessage()));
         }
