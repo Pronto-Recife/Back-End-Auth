@@ -33,8 +33,8 @@ public class AuthenticationController {
         return ResponseEntity.ok("Logout realizado com sucesso!");
     }
     @PostMapping("/session")
-    public ResponseEntity<Void> verifySession(@RequestBody SessionDTO request){
-        boolean valid = tokenService.validateToken(request.getAccessToken());
+    public ResponseEntity<Void> verifySession(@RequestHeader(name="x-auth", required = true) String request){
+        boolean valid = tokenService.validateToken(request);
         return valid ? ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 }
