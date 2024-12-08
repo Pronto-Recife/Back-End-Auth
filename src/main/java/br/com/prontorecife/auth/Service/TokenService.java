@@ -4,6 +4,7 @@ import br.com.prontorecife.auth.Exceptions.CustomException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.jsonwebtoken.Jwts;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@RequiredArgsConstructor
 public class TokenService {
     @Value("${jjwt.secret}")
     private String jjwtSecret;
+    private final RedisService redisService;
     private final ConcurrentHashMap<String, Boolean> invalidatedTokens = new ConcurrentHashMap<>();
 
     public String generateToken(String id){
@@ -47,11 +50,11 @@ public class TokenService {
             throw new CustomException("Sessão invalida!", HttpStatus.FORBIDDEN, Map.of("error", e.getMessage()));
         }
     }
-    public void invalidateToken(String token){
-        invalidatedTokens.put(token, true);
+    public void invalidateToken(String token, long expirationTime){
+        redisService.addTokenToBlacklist(token, expirationTime);
     }
     public boolean isTokenInvalid(String token) {
-        return invalidatedTokens.containsKey(token);
+        return redisService.isTokenBlacklisted(token);
     }
     public Algorithm encryptor(String jjwtSecret){
         return Algorithm.HMAC256(jjwtSecret);

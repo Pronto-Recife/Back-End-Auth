@@ -37,7 +37,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         String token = this.recoverToken(request);
         String validatedToken = tokenService.validateToken(token);
         //String email = tokenService.getEmailFromToken(validatedToken);
-        if (token != null && token.startsWith("Bearer: ")) {
+        if (token != null && token.startsWith("Bearer ")) {
             String processedToken = token.substring(7);
             if (tokenService.isTokenInvalid(processedToken)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

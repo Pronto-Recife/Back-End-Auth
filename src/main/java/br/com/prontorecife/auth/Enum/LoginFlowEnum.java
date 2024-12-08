@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum LoginFlowEnum {
     CRM,
-    CPF,
-    CNPJ;
+    CPF;
+    //CNPJ;
 
     @JsonValue
     @Override

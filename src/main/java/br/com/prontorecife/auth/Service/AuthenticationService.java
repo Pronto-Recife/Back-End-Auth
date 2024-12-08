@@ -36,13 +36,13 @@ public class AuthenticationService {
     private final TokenService tokenService;
 
     public String authenticate(AuthenticationRequestDTO request){
-        if (request.getFlow() == LoginFlowEnum.CNPJ) {
+        /*if (request.getFlow() == LoginFlowEnum.CNPJ) {
             EstabelecimentoModel estabelecimento = getEstabelecimento(request.getIdentificador());
             if (!passwordEncoder.matches(request.getSenha(), estabelecimento.getSenha())) {
                 throw new CustomException("CNPJ ou Senha Incorreta!", HttpStatus.UNAUTHORIZED, null);
             }
             return tokenService.generateToken(estabelecimento.getId());
-        }
+        }*/
         if (request.getFlow() == LoginFlowEnum.CRM) {
             MedicoModel medico = getMedico(request.getIdentificador());
             if (!passwordEncoder.matches(request.getSenha(), medico.getSenha())) {
@@ -67,8 +67,8 @@ public class AuthenticationService {
         return pacienteRepository.findByCPF(cpf).orElseThrow(() ->
                 new RuntimeException("Paciente Não Encontrado!"));
     }
-    public EstabelecimentoModel getEstabelecimento(String cnpj){
+    /*public EstabelecimentoModel getEstabelecimento(String cnpj){
         return estabelecimentoRepository.findByCnpj(cnpj).orElseThrow(() ->
                 new RuntimeException("Estabelecimento Não Encontrado!"));
-    }
+    }*/
 }

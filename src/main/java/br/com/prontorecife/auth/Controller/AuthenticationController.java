@@ -22,9 +22,10 @@ public class AuthenticationController {
     }
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token){
-        String processedToken = token.startsWith("token: ") ? token.substring(7) : token;
+        String processedToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-        tokenService.invalidateToken(processedToken);
+        long expirationTimeInSeconds = 86400;
+        tokenService.invalidateToken(processedToken, expirationTimeInSeconds);
 
         return ResponseEntity.ok("Logout realizado com sucesso!");
     }
