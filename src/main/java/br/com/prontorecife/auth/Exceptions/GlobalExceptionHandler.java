@@ -1,6 +1,6 @@
 package br.com.prontorecife.auth.Exceptions;
 
-import com.start.pronto_recife.DTOs.ExceptionResponseDTO;
+import br.com.prontorecife.auth.DTOs.ExceptionResponseDTO;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

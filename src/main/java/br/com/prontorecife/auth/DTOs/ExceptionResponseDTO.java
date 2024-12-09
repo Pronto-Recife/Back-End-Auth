@@ -1,4 +1,4 @@
-package com.start.pronto_recife.DTOs;
+package br.com.prontorecife.auth.DTOs;
 
 import lombok.Getter;
 import lombok.Setter;
