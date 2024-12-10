@@ -17,12 +17,10 @@ import java.util.UUID;
 public class PacienteModel{
     @Id
     private String id;
-    @Column(name = "cpf", unique = true, length = 14)
-    private String CPF;
-    @Column (name = "estado_civil")
-    private String estadoCivil;
     @Column (name = "nome_completo")
     private String nomeCompleto;
+    @Column(name = "cpf", unique = true, length = 14)
+    private String CPF;
     @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
     private String genero;
@@ -30,10 +28,15 @@ public class PacienteModel{
     private String email;
     private String senha;
     private String telefone;
+    @Column(name = "contato_representante", unique = true)
     private String contatoRepresentante;
     private String endereco;
-    @Column(name = "responsavel_CPF", length = 14)
+    private String alergia;
+    @Column(name = "condicoes_cronicas", unique = true)
+    private String condicoesCronicas;
+    @Column(name = "responsavel_cpf", unique = true)
     private String responsavelCpf;
+
 
     @PrePersist
     public void prePersist() {
